@@ -1,0 +1,46 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Streamlit: Hello",
+			"type": "shell",
+			"command": "${workspaceFolder}/.venv/Scripts/python.exe",
+			"args": [
+				"-m",
+				"streamlit",
+				"hello",
+				"--server.address",
+				"127.0.0.1",
+				"--server.port",
+				"8501",
+				"--server.headless",
+				"true",
+				"--browser.gatherUsageStats",
+				"false"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Streamlit: AI Study Notes",
+			"type": "shell",
+			"command": "${workspaceFolder}/.venv/Scripts/python.exe",
+			"args": [
+				"-m",
+				"streamlit",
+				"run",
+				"${workspaceFolder}/app.py",
+				"--server.address",
+				"127.0.0.1",
+				"--server.port",
+				"8502",
+				"--server.headless",
+				"true",
+				"--browser.gatherUsageStats",
+				"false"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

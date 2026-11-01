@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘 할 일</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #26342f;
+      --muted: #707a75;
+      --green: #267052;
+      --line: #e1e6e2;
+      --red: #b34343;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 80px 20px;
+      color: var(--ink);
+      background-color: #f4f6f3;
+      background-image: linear-gradient(#26342f05 1px, transparent 1px),
+        linear-gradient(90deg, #26342f05 1px, transparent 1px);
+      background-size: 28px 28px;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button, input { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid #81b79d; outline-offset: 4px; }
+
+    main {
+      width: 100%;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 36px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--green);
+      border-radius: 8px;
+      box-shadow: 0 12px 40px #26342f08;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--green);
+      font-family: Georgia, serif;
+      font-size: 15px;
+      font-style: italic;
+    }
+
+    h1 { margin: 0 0 28px; font-size: 28px; line-height: 1.4; }
+    form { display: flex; gap: 8px; }
+
+    #task-input {
+      flex: 1;
+      min-width: 0;
+      height: 48px;
+      padding: 0 14px;
+      border: 1px solid #cbd4ce;
+      border-radius: 6px;
+      background: #fcfdfb;
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    #task-input::placeholder { color: var(--muted); }
+
+    .add-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-shrink: 0;
+      min-height: 48px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 6px;
+      background: var(--green);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .add-button:hover { background: #1d593f; }
+    .plus { font-size: 23px; font-weight: 400; }
+
+    .list-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 30px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 { margin: 0; font-size: 13px; font-weight: 700; }
+    #summary { margin: 0; color: var(--muted); font-size: 12px; }
+    #task-list { list-style: none; margin: 0; padding: 0; }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 64px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      animation: arrive 160ms ease-out;
+    }
+
+    .task label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+      padding: 10px 0;
+      cursor: pointer;
+    }
+
+    .task input {
+      flex-shrink: 0;
+      width: 19px;
+      height: 19px;
+      margin: 2px 0 0;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+
+    .task-text { min-width: 0; font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
+    .task input:checked + .task-text { color: var(--muted); text-decoration: line-through; }
+
+    .delete-button {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 25px;
+      line-height: 1;
+    }
+
+    .delete-button:hover { color: var(--red); background: #fff0ee; }
+    #empty-state { margin: 0; padding: 48px 0 32px; color: var(--muted); text-align: center; font-size: 14px; }
+
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .task { animation: none; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 32px 16px; }
+      main { padding: 24px 20px; }
+      h1 { font-size: 25px; }
+      .add-button { padding: 0 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">One thing at a time.</p>
+      <h1>오늘 할 일</h1>
+    </header>
+
+    <form id="task-form">
+      <input id="task-input" type="text" aria-label="새 할 일" placeholder="새 할 일" autocomplete="off" required>
+      <button class="add-button" type="submit"><span class="plus" aria-hidden="true">+</span>추가</button>
+    </form>
+
+    <section aria-labelledby="list-title">
+      <div class="list-heading">
+        <h2 id="list-title">내 목록</h2>
+        <p id="summary" role="status" aria-live="polite" aria-atomic="true">0개 중 0개 완료</p>
+      </div>
+      <ul id="task-list"></ul>
+      <p id="empty-state">아직 할 일이 없어요.</p>
+    </section>
+  </main>
+
+  <template id="task-template">
+    <li class="task">
+      <label>
+        <input type="checkbox">
+        <span class="task-text"></span>
+      </label>
+      <button class="delete-button" type="button" title="삭제" aria-label="할 일 삭제">&times;</button>
+    </li>
+  </template>
+
+  <script>
+    const taskForm = document.querySelector('#task-form');
+    const taskInput = document.querySelector('#task-input');
+    const taskList = document.querySelector('#task-list');
+    const taskTemplate = document.querySelector('#task-template');
+    const summary = document.querySelector('#summary');
+    const emptyState = document.querySelector('#empty-state');
+
+    function updateSummary() {
+      const total = taskList.children.length;
+      const completed = taskList.querySelectorAll('input:checked').length;
+      summary.textContent = `${total}개 중 ${completed}개 완료`;
+      emptyState.hidden = total > 0;
+    }
+
+    taskForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const text = taskInput.value.trim();
+      if (!text) {
+        taskInput.focus();
+        return;
+      }
+
+      const task = taskTemplate.content.cloneNode(true);
+      task.querySelector('.task-text').textContent = text;
+      task.querySelector('.delete-button').setAttribute('aria-label', `${text} 삭제`);
+      taskList.append(task);
+      taskInput.value = '';
+      taskInput.focus();
+      updateSummary();
+    });
+
+    taskList.addEventListener('change', updateSummary);
+
+    taskList.addEventListener('click', (event) => {
+      const deleteButton = event.target.closest('.delete-button');
+      if (!deleteButton) return;
+
+      const task = deleteButton.closest('.task');
+      const nextTask = task.nextElementSibling || task.previousElementSibling;
+      task.remove();
+      updateSummary();
+      const focusTarget = nextTask ? nextTask.querySelector('input') : taskInput;
+      focusTarget.focus();
+    });
+  </script>
+</body>
+</html>
